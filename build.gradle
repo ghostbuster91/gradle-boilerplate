@@ -1,0 +1,73 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2"
+        }
+    }
+}
+
+
+plugins {
+    id 'java-gradle-plugin'
+    id 'scala'
+    id 'maven-publish'
+}
+
+gradlePlugin {
+    plugins {
+        bradlePlugin {
+            id = 'io.ghostbuster91.boilerplate.gradle'
+            implementationClass = 'io.ghostbuster91.boilerplate.GradleBoilerplate'
+        }
+    }
+}
+
+sourceCompatibility = JavaVersion.VERSION_1_6
+targetCompatibility = JavaVersion.VERSION_1_6
+
+version = '0.1.0'
+group = 'io.ghostbuster91.boilerplate'
+
+publishing {
+    publications {
+        pluginPublication(MavenPublication) {
+            from components.java
+            groupId project.group
+            artifactId 'gradle'
+            version project.version
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        scala {
+            srcDirs = ['src/main/scala', 'src/main/java']
+        }
+        java {
+            srcDirs = []
+        }
+    }
+}
+
+dependencies {
+    compile 'org.scala-lang:scala-library:2.11.12'
+    compile gradleApi()
+    compile "org.scala-lang.modules:scala-parser-combinators_2.11:1.0.2"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+}
+
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
