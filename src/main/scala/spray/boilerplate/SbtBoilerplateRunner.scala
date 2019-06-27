@@ -1,6 +1,8 @@
 package spray.boilerplate
 
-import java.io.{File, FilenameFilter, PrintWriter}
+import java.io.{File, PrintWriter}
+import java.nio.file.attribute.BasicFileAttributes
+import java.nio.file._
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
@@ -14,12 +16,7 @@ object SbtBoilerplateRunner {
     new File(outputDir).mkdirs()
     val bradleDir = new File(resourcesDir(project), "bradle")
     if (bradleDir.exists()) {
-      val resources = bradleDir.listFiles(new FilenameFilter {
-        override def accept(file: File, s: String): Boolean = s.matches(".*bradle$")
-      }).toList
-      resources.foreach { f =>
-        processFile(outputDir, f)
-      }
+      Files.walkFileTree(bradleDir.toPath, new GeneratingFilesVisitor(bradleDir.toPath, Paths.get(outputDir)))
     }
   }
 
@@ -27,8 +24,21 @@ object SbtBoilerplateRunner {
     val sourceSets = project.getProperties.get("sourceSets").asInstanceOf[SourceSetContainer]
     sourceSets.getByName("main").getResources.getSrcDirs.asScala.toList.head
   }
+}
 
-  private def processFile(outputDir: String, f: File): Unit = {
+class GeneratingFilesVisitor(val bradleDir: Path, val outputDir: Path) extends SimpleFileVisitor[Path] {
+  override def visitFile(file: Path, basicFileAttributes: BasicFileAttributes): FileVisitResult = {
+    if (file.toFile.getName.endsWith(".bradle")) {
+      val relativePath = bradleDir.relativize(file)
+      val outputPath = outputDir.resolve(relativePath)
+      val outputTargetDir = new File(outputPath.toFile.getParent)
+      outputTargetDir.mkdirs()
+      processFile(outputTargetDir, file.toFile)
+    }
+    FileVisitResult.CONTINUE
+  }
+
+  private def processFile(outputDir: File, f: File): Unit = {
     val bufferedSource = Source.fromFile(f)
     val template = bufferedSource.getLines.mkString("\n")
     val content = Generator.generateFromTemplate(template, 22)
