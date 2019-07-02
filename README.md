@@ -30,3 +30,8 @@ compileKotlin {
 ```
 
 Full example which shows how to generate rxJava combineLatest methods for more than 9 parameters can be found [here](https://github.com/ghostbuster91/gradle-boilerplate-example)
+
+
+### Releasing
+1. Update version in build.gradle
+2. Create tag and push to github, travis will handle the rest
