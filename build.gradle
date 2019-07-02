@@ -13,6 +13,13 @@ plugins {
     id 'java-gradle-plugin'
     id 'scala'
     id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '0.10.0'
+}
+
+pluginBundle {
+    website = 'https://github.com/ghostbuster91/gradle-boilerplate'
+    vcsUrl = 'https://github.com/ghostbuster91/gradle-boilerplate'
+    tags = ['boilerplate', 'generate']
 }
 
 gradlePlugin {
@@ -20,6 +27,7 @@ gradlePlugin {
         bradlePlugin {
             id = 'io.ghostbuster91.boilerplate.gradle'
             implementationClass = 'io.ghostbuster91.boilerplate.GradleBoilerplate'
+            description = "An adaptation of sbt-boilerplate plugin for gradle"
         }
     }
 }
