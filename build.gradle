@@ -20,6 +20,13 @@ pluginBundle {
     website = 'https://github.com/ghostbuster91/gradle-boilerplate'
     vcsUrl = 'https://github.com/ghostbuster91/gradle-boilerplate'
     tags = ['boilerplate', 'generate']
+
+    plugins {
+        bradlePlugin {
+            displayName = 'Gradle boilerplate plugin'
+            description = "An adaptation of sbt-boilerplate plugin for gradle"
+        }
+    }
 }
 
 gradlePlugin {
@@ -27,7 +34,6 @@ gradlePlugin {
         bradlePlugin {
             id = 'io.ghostbuster91.boilerplate.gradle'
             implementationClass = 'io.ghostbuster91.boilerplate.GradleBoilerplate'
-            description = "An adaptation of sbt-boilerplate plugin for gradle"
         }
     }
 }
